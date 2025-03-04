@@ -8,10 +8,10 @@
 </template>
 
 <style lang="less">
-.box
-{
-  width: 150px;
-  height: 100px;
-  background-color: red;
-}
+// .box
+// {
+//   width: 150px;
+//   height: 100px;
+//   background-color: red;
+// }
 </style>
