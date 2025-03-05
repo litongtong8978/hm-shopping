@@ -42,20 +42,20 @@ export default {
     }
   },
   async created () {
-    // const params = {
-    //   categoryId: this.$route.query.categoryId,
-    //   goodsName: this.querySearch,
-    //   page: this.page
-    // }
-    // const { data: { list } } = await getProList({ params })
-    // // console.log(res)
-    // this.proList = list.data
-    const { data: { list } } = await getProList({
+    const params = {
       categoryId: this.$route.query.categoryId,
       goodsName: this.querySearch,
       page: this.page
-    })
+    }
+    const { data: { list } } = await getProList(params)
+    // console.log(res)
     this.proList = list.data
+  //   const { data: { list } } = await getProList({
+  //     categoryId: this.$route.query.categoryId,
+  //     goodsName: this.querySearch,
+  //     page: this.page
+  //   })
+  //   this.proList = list.data
   },
 
   data () {
