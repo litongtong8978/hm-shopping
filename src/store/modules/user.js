@@ -1,4 +1,4 @@
-// /* eslint-disable space-before-function-paren */
+/* eslint-disable space-before-function-paren */
 import { getInfo, setInfo } from '@/utils/storage'
 export default {
   namespaced: true,

@@ -11,6 +11,7 @@ import Category from '@/views/layout/category'
 import Cart from '@/views/layout/cart'
 import User from '@/views/layout/user'
 import Myorder from '@/views/myorder'
+import store from '@/store'
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -35,6 +36,22 @@ const router = new VueRouter({
     { path: '/myorder', component: Myorder }
 
   ]
+})
+const authUrls = ['/pay', '/myorder']
+router.beforeEach((to, from, next) => {
+  if (!authUrls.includes(to.path)) {
+    // 非权限页面，直接放行
+    next()
+    return
+  }
+
+  // 是权限页面，需要判断token
+  const token = store.getters.token
+  if (token) {
+    next()
+  } else {
+    next('/login')
+  }
 })
 
 export default router
