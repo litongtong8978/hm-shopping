@@ -8,8 +8,8 @@ import '@/styles/common.less'
 // import Vant from 'vant'
 // import 'vant/lib/index.css'
 import { Toast } from 'vant'
-Toast('')
-Vue.prototype.$toast = Toast
+Toast()
+// Vue.prototype.$toast = Toast
 
 // Vue.use(Vant)
 // import { Button } from 'vant'
