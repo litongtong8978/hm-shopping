@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 export const getHomeData = () => {
-  return request.get('/pages/details', {
+  return request.get('/page/detail', {
     params: {
-      pageId: 1
+      pageId: 0
     }
   })
 }

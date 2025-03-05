@@ -9,13 +9,13 @@
     </van-search>
 
     <!-- 搜索历史 -->
-    <div class="search-history" v-if="history.length > 0">
+    <div class="search-history"  v-if="history.length >=0">
       <div class="title">
         <span>最近搜索</span>
-        <van-icon @click="clear" name="delete-o" size="16" />
+        <van-icon   @click="clear" name="delete-o" size="16" />
       </div>
-      <div class="list">
-        <div v-for="item in history" :key="item" class="list-item" @click="goSearch(item)">
+      <div class="list" >
+        <div  v-for="item in history" :key="item" class="list-item" @click="goSearch(item)">
           {{ item }}
         </div>
       </div>
@@ -24,38 +24,40 @@
 </template>
 
 <script>
-export default {
-  name: 'SearchIndex'
-}
-// import { getHistoryList, setHistoryList } from '@/utils/storage'
 // export default {
-//   name: 'SearchIndex',
-//   data () {
-//     return {
-//       search: '', // 输入框的内容
-//       history: getHistoryList() // 历史记录
-//     }
-//   },
-//   methods: {
-//     goSearch (key) {
-//       // console.log('进行了搜索，搜索历史要更新', key)
-//       const index = this.history.indexOf(key)
-//       if (index !== -1) {
-//         // 存在相同的项，将原有关键字移除
-//         // splice(从哪开始, 删除几个, 项1, 项2)
-//         this.history.splice(index, 1)
-//       }
-//       this.history.unshift(key)
-//       setHistoryList(this.history)
-
-//       // 跳转到搜索列表页
-//       this.$router.push(`/searchlist?search=${key}`)
-//     },
-//     clear () { this.history = []
-//       setHistoryList([])
-//     }
-//   }
+//   name: 'SearchIndex'
 // }
+import { getHistoryList, setHistoryList } from '@/utils/storage'
+export default {
+  name: 'SearchIndex',
+  data () {
+    return {
+      search: '', // 输入框的内容
+      history: getHistoryList() // 历史记录
+      // history2: ['牛奶', '衣服', '玩偶', '化妆品']
+    }
+  },
+
+  methods: {
+    goSearch (key) {
+      // console.log('进行了搜索，搜索历史要更新', key)
+      const index = this.history.indexOf(key)
+      if (index !== -1) {
+        // 存在相同的项，将原有关键字移除
+        this.history.splice(index, 1)
+      }
+      this.history.unshift(key)
+      setHistoryList(this.history)
+
+      // 跳转到搜索列表页
+      this.$router.push(`/searchlist?search=${key}`)
+    },
+    clear () {
+      this.history = []
+      setHistoryList([])
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>
