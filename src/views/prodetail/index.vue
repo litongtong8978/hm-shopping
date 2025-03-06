@@ -72,15 +72,48 @@
         <van-icon name="shopping-cart-o"/>
         <span>购物车</span>
       </div>
-      <div class="btn-add">加入购物车</div>
-      <div class="btn-buy">立刻购买</div>
+      <div class="btn-add" @click="addFn">加入购物车</div>
+      <div class="btn-buy" @click='buyFn'>立刻购买</div>
     </div>
+  <van-action-sheet v-model="show" :title="mode==='cart'?'加入购物车':'立刻购买'">
+    <div class="product">
+        <div class="product-title">
+          <div class="left">
+            <img :src="detail.goods_image" alt="">
+          </div>
+          <div class="right">
+            <div class="price">
+              <span>¥</span>
+              <span class="nowprice">{{ detail.goods_price_min }}</span>
+            </div>
+            <div class="count">
+              <span>库存</span>
+              <span>{{ detail.stock_total }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="num-box">
+          <span>数量</span>
+          <!-- v-model 本质上 :value 和 @input 的简写 -->
+          <CountBox v-model="addCount"></CountBox>
+        </div>
+
+        <!-- 有库存才显示提交按钮 -->
+        <div class="showbtn" v-if="detail.stock_total > 0">
+          <div class="btn" v-if="mode === 'cart'" @click="addCart">加入购物车</div>
+          <div  class="btn now"    v-else @click="goBuyNow">立刻购买</div>
+        </div>
+
+        <div class="btn-none" v-else>该商品已抢完</div>
+      </div>
+</van-action-sheet>
   </div>
+
 </template>
 
 <script>
-import { getProDetail } from '@/api/product'
-// import CountBox from '@/components/CountBox.vue'
+import { getProDetail, getProComments } from '@/api/product'
+import CountBox from '@/components/CountBox.vue'
 import defaultImg from '@/assets/default-avatar.png'
 export default {
   name: 'ProDetail',
@@ -94,9 +127,14 @@ export default {
       detail: {},
       commentList: [],
       total: 0,
-      defaultImg: defaultImg
-
+      defaultImg: defaultImg,
+      show: false, // 弹层显示隐藏
+      mode: 'cart',
+      addCount: 5
     }
+  },
+  components: {
+    CountBox
   },
 
   computed: {
@@ -118,10 +156,20 @@ export default {
       this.images = detail.goods_images
     },
     async getComment () {
-      const { data: { list, total } } = await this.getComment(this.goodsId, 3)
+      const { data: { list, total } } = await getProComments(this.goodsId, 5)
       this.commentList = list
       this.total = total
-    }
+    },
+    addFn () {
+      this.mode = 'cart'
+      this.show = true
+    },
+    buyFn () {
+      this.mode = ''
+      this.show = true
+    },
+    addCart () { console.log(' ') },
+    goBuyNow () { console.log(' ') }
   }
 }
 </script>
@@ -271,6 +319,70 @@ export default {
 
 .tips {
   padding: 10px;
+}
+.product {
+  .product-title {
+    display: flex;
+    .left {
+      img {
+        width: 90px;
+        height: 90px;
+      }
+      margin: 10px;
+    }
+    .right {
+      flex: 1;
+      padding: 10px;
+      .price {
+        font-size: 14px;
+        color: #fe560a;
+        .nowprice {
+          font-size: 24px;
+          margin: 0 5px;
+        }
+      }
+    }
+  }
+
+  .num-box {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    align-items: center;
+  }
+
+  .btn, .btn-none {
+    height: 40px;
+    line-height: 40px;
+    margin: 20px;
+    border-radius: 20px;
+    text-align: center;
+    color: rgb(255, 255, 255);
+    background-color: rgb(255, 148, 2);
+  }
+  .btn.now {
+    background-color: #fe5630;
+  }
+  .btn-none {
+    background-color: #cccccc;
+  }
+}
+
+.footer .icon-cart {
+  position: relative;
+  padding: 0 6px;
+  .num {
+    z-index: 999;
+    position: absolute;
+    top: -2px;
+    right: 0;
+    min-width: 16px;
+    padding: 0 4px;
+    color: #fff;
+    text-align: center;
+    background-color: #ee0a24;
+    border-radius: 50%;
+  }
 }
 </style>
 ```
