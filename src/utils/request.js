@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Toast } from 'vant'
+import store from '@/store'
 const instance = axios.create({
   baseURL: 'https://smart-shop.itheima.net/index.php?s=/api',
   timeout: 5000,
@@ -17,11 +18,16 @@ instance.interceptors.request.use(function (config) {
     forbidClick: true,
     duration: 3000
   })
+
+  const token = store.getters.token
+  if (token) {
+    config.headers['Access-Token'] = token
+    config.headers.platform = 'H5'
+  }
   return config
 }, function (error) {
   return Promise.reject(error)
 })
-
 // 添加响应拦截器
 instance.interceptors.response.use(function (response) {
   // 2xx 范围内的状态码都会触发该函数。

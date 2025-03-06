@@ -43,7 +43,7 @@ export default {
       second: 60,
       timer: null,
       mobile: '',
-      smsCode: ''
+      msgCode: ''
     }
   },
   async created () {
@@ -62,8 +62,9 @@ export default {
         return
       }
       // 验证码和手机号均正确
-      await getMsgCode(this.picCode, this.picKey, this.mobile)
+      const msgCode = await getMsgCode(this.picCode, this.picKey, this.mobile)
       this.$toast('短信发送成功')
+      console.log(msgCode)
       this.timer = setInterval(() => {
         this.second--
         if (this.second <= 0) {
@@ -77,24 +78,26 @@ export default {
       if (!this.validFn()) {
         return
       }
-      if (/^\d{6}&/.test(this.smsCode)) {
+      if (!/^\d{6}$/.test(this.msgCode)) {
         this.$toast('请输入正确的短信码')
         return
       }
-      const res = await codeLogin(this.mobile, this.smsCode)
+      const res = await codeLogin(this.mobile, this.msgCode)
+      console.log(res)
       this.$store.commit('user/setUserInfo', res.data)
       this.$toast('登陆成功')
-      this.$router.push('/')
+      const url = this.$route.query.backUrl || '/'
+      this.$router.push(url)
     },
     validFn () {
       if (!/^1[3-9]\d{9}$/.test(this.mobile)) {
         this.$toast('请输入正确手机号')
         return false
       }
-      // if (/^\w{4}$/.test(this.picCode)) {
-      //   this.$toast('请输入正确验证码')
-      //   return false
-      // }
+      if (/^\w{4}$/.test(this.picCode)) {
+        this.$toast('请输入正确验证码')
+        return false
+      }
       return true
     }
   },

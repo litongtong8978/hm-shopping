@@ -13,7 +13,9 @@ export default {
       setInfo(obj)
     }
   },
-  actions: {},
+  actions: {
+
+  },
   getter: {}
 
 }

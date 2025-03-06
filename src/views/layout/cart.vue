@@ -61,9 +61,75 @@
 <script>
 // import CountBox from '@/components/CountBox.vue'
 // import { mapGetters, mapState } from 'vuex'
+import CountBox from '@/components/CountBox.vue'
+import { mapGetters, mapState } from 'vuex'
 export default {
-  name: 'CartPage'
-
+  name: 'CartPage',
+  components: {
+    CountBox
+  },
+  data () {
+    return {
+      isEdit: false
+    }
+  },
+  computed: {
+    ...mapState('cart', ['cartList']),
+    ...mapGetters('cart', ['cartTotal', 'selCartList', 'selCount', 'selPrice', 'isAllChecked']),
+    isLogin () {
+      return this.$store.getters.token
+    }
+  },
+  created () {
+    // 必须是登录过的用户，才能用户购物车列表
+    if (this.isLogin) {
+      this.$store.dispatch('cart/getCartAction')
+    }
+  },
+  methods: {
+    toggleCheck (goodsId) {
+      this.$store.commit('cart/toggleCheck', goodsId)
+    },
+    toggleAllCheck () {
+      this.$store.commit('cart/toggleAllCheck', !this.isAllChecked)
+    },
+    changeCount (goodsNum, goodsId, goodsSkuId) {
+      // console.log(goodsNum, goodsId, goodsSkuId)
+      // 调用 vuex 的 action，进行数量的修改
+      this.$store.dispatch('cart/changeCountAction', {
+        goodsNum,
+        goodsId,
+        goodsSkuId
+      })
+    },
+    async handleDel () {
+      if (this.selCount === 0) return
+      await this.$store.dispatch('cart/delSelect')
+      this.isEdit = false
+    },
+    goPay () {
+      // 判断有没有选中商品
+      if (this.selCount > 0) {
+        // 有选中的 商品 才进行结算跳转
+        this.$router.push({
+          path: '/pay',
+          query: {
+            mode: 'cart',
+            cartIds: this.selCartList.map(item => item.id).join(',') // 'cartId,cartId,cartId'
+          }
+        })
+      }
+    }
+  },
+  watch: {
+    isEdit (value) {
+      if (value) {
+        this.$store.commit('cart/toggleAllCheck', false)
+      } else {
+        this.$store.commit('cart/toggleAllCheck', true)
+      }
+    }
+  }
 }
 </script>
 

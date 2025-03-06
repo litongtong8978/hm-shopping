@@ -64,12 +64,13 @@
     </div>
   <!-- 底部 -->
     <div class="footer">
-      <div class="icon-home">
+      <div @click="$router.push('/')" class="icon-home">
         <van-icon name="wap-home-o" />
         <span>首页</span>
       </div>
-      <div class="icon-cart">
-        <van-icon name="shopping-cart-o"/>
+      <div @click="$router.push('/cart')" class="icon-cart">
+        <span v-if="cartTotal > 0" class="num">{{ cartTotal }}</span>
+        <van-icon name="shopping-cart-o" />
         <span>购物车</span>
       </div>
       <div class="btn-add" @click="addFn">加入购物车</div>
@@ -101,7 +102,7 @@
         <!-- 有库存才显示提交按钮 -->
         <div class="showbtn" v-if="detail.stock_total > 0">
           <div class="btn" v-if="mode === 'cart'" @click="addCart">加入购物车</div>
-          <div  class="btn now"    v-else @click="goBuyNow">立刻购买</div>
+          <div  class="btn now"    v-else @click="addCart">立刻购买</div>
         </div>
 
         <div class="btn-none" v-else>该商品已抢完</div>
@@ -115,6 +116,7 @@
 import { getProDetail, getProComments } from '@/api/product'
 import CountBox from '@/components/CountBox.vue'
 import defaultImg from '@/assets/default-avatar.png'
+import { addCart } from '@/api/cart'
 export default {
   name: 'ProDetail',
   data () {
@@ -130,7 +132,8 @@ export default {
       defaultImg: defaultImg,
       show: false, // 弹层显示隐藏
       mode: 'cart',
-      addCount: 5
+      addCount: 5,
+      cartTotal: 5
     }
   },
   components: {
@@ -168,7 +171,33 @@ export default {
       this.mode = ''
       this.show = true
     },
-    addCart () { console.log(' ') },
+    async addCart () {
+      console.log(' ')
+      if (!this.$store.getters.token) {
+        this.$dialog.confirm({
+          title: '温馨提示',
+          message: '要先登录哦',
+          confirmButtonText: '去登录',
+          cancelButtonText: '再逛逛'
+        })
+          .then(() => {
+            // on confirm
+            this.$router.replace({
+              path: '/login',
+              query: {
+                backUrl: this.$route.fullPath
+              }
+            })
+          })
+          .catch(() => {
+            // on cancel
+          })
+      }
+      const { data } = await addCart(this.goodsId, this.addCount, this.detail.skuList[0].goods_sku_id)
+      this.cartTotal = data.cartTotal
+      this.$toast('加入购物车成功')
+      this.show = false
+    },
     goBuyNow () { console.log(' ') }
   }
 }
@@ -374,8 +403,8 @@ export default {
   .num {
     z-index: 999;
     position: absolute;
-    top: -2px;
-    right: 0;
+    top: -4px;
+    right: 6px;
     min-width: 16px;
     padding: 0 4px;
     color: #fff;
