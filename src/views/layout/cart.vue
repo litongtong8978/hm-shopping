@@ -36,7 +36,7 @@
           全选
         </div>
 
-        <div class="all-total">
+        <div   class="all-total">
           <div class="price">
             <span>合计：</span>
             <span>¥ <i class="totalPrice">{{ selPrice }}</i></span>

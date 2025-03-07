@@ -3,8 +3,8 @@
     <div class="head-page" v-if="isLogin">
       <div class="head-img">
         <img src="@/assets/default-avatar.png" alt="" />
-      </div>
-      <div class="info">
+       </div>
+      <div  class="info">
         <div class="mobile">{{ detail.mobile }}</div>
         <div class="vip">
           <van-icon name="diamond-o" />
